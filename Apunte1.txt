@@ -1,0 +1,203 @@
+-------------------------APUNTES CURSO DJANGO DJANGO-REST API ----------------------------------------------
+
+Al comenzar el proyecto django, se crean varios archivos, entre ellos:
+
+__init__.py  Este siempre va en las carpetas para que sirvan como librerías.
+
+asgi.py y wsgi.py Permiten que se levante la página por defecto de django y el servidor 
+
+settings.py Es el archivo de configuraciones de mi entorno Django, tiene muchas cosas, por ejemplo configurar el idioma.
+
+urls.py Tambien es importante, manejará las urls disponibles del proyecto, puede tener un path que nos lleve a otra carpeta de url's
+por defecto, trae la de admin, que al ingresar a la ip, que nos da runserver / admin , entramos al administrador de Django. 
+
+Dentro de django, toda función declarada necesita llevar el argumento self. (Repasar el tema de funciones )
+
+
+----------------------------------------------------------------------------------------------------------------
+--------------------------SECCION 4. ENTORNOS DE TRABAJO OPTIMO CON DJANGO--------------------------------------
+----------------------------------------------------------------------------------------------------------------
+
+Se tiene que separar los entornos de testing, local y producción, cada uno tendrá sus propia configuración,
+sus propios paquetes etc. y cada uno trabaja solo, pero en el mismo proyecto. El proyecto final, se traspasa a producción.
+Producción, es el producto final, sin ninguna librería innecesaria. Solo lo estrictamente necesario para el producto final del software.
+
+Todos los entornos, necesitaran el secret_key , el bloque de INSTALLED _APPS . Crearemos una nueva carpeta settings, en donde tendremos 
+un archivo de configuracion para cada entorno, sin reescribir en cada uno codigo, si no escribiendo la configuracion que es compartida 
+en otro archivo llamado base.py , ahí alojaremos todo lo de settings.py , que necesitemos 
+
+
+---------APLICACIONES EN DJANGO (DOCUMENTACION) STARTAPP:---------
+
+El directorio raíz de un proyecto (el que contiene manage.py) suele ser el contenedor de todas las aplicaciones 
+de un proyecto que no se instalan por separado.
+
+El término aplicación describe un paquete de Python que proporciona un conjunto de características. 
+------[[Las aplicaciones se pueden reutilizar en varios proyectos.]]-----
+
+Las aplicaciones incluyen alguna combinación de modelos, vistas, plantillas, etiquetas de plantilla, archivos estáticos, URL,
+middleware, etc. Generalmente están conectadas a proyectos con la INSTALLED_APPSconfiguración y, opcionalmente, con otros mecanismos
+como URLconfs, la MIDDLEWAREconfiguración o la herencia de plantilla.
+
+Son la forma de aplicar el principio de encapsulamiento en django o algo parecido a microservicios, la idea es que cada aplicacion de django
+sea independiente de las demás , de esta forma podamos reciclarlas. Imaginate, desarrolladas algunas, puedo reciclar en otros proyectos.
+Por ejemplo una app que solo se dedique a busquedas, otra solo almacen, otra solo ventas etc.
+
+Eso sí estos no son modulos, cada uno es un proyecto ya que cada uno tiene sus archivos de configuracion correspondientes y toda 
+la estructura de un proyecto en django , codigo, base de datos, urls, templates , views. 
+
+Una vez creadas las apps, dentro de la carpeta applications, debemos agregarlas a nuestro archivo base.py de configuracion en el item 
+INSTALLED_APPS, sin embargo la primera direccion la reconoce ya como una aplicacion :
+
+INSTALLED_APPS =[
+'polls.apps.PollsConfig',
+'django.contrib.admin', 
+...
+]
+
+Por lo que la ruta applications.departament.apps , nos dará error. Para corregir esto y matener nuestro orden mediante la carpeta 
+applications, quitaremos el .apps de nuestras rutas 
+
+en vez de poner 'applications.empleados.app' pondremos : 'applications.empleados'
+Pero en el archivo apps.py de empleados, en name pondremos en vez de name='empleados'  ponemos : name 'applications.empleados'
+
+Así queda finalmente:
+
+INSTALLED_APPS = [
+    'django.contrib.admin',
+    'django.contrib.auth',
+    'django.contrib.contenttypes',
+    'django.contrib.sessions',
+    'django.contrib.messages',
+    'django.contrib.staticfiles',
+    # LOCAL APPS 
+    'applications.departamento',
+    'applications.empleados',
+]
+
+--------------------------------------------------------------------------------------------------------
+---------Patrón de diseño MVT - Modelo Vista Template --------------------------------------------------
+---------------------------------------------------------------------------------------------------------
+
+Haremos pruebas con una nueva app "probes" , la agregamos al archivo de cngiracion installed_apps , le cambiamos el name en su apps.py
+a applications.probe. Esta apps , como todas se crea con views.py , models.py , le crearemos una carpeta templates, dnde crearemosnuestros 
+templates html , que vendrian siendo la parte que falta del mvt. El archivo apps.py es para configurar la aplicacion , el test.py para
+posteriormente realizar pruebas unitarias. 
+
+Puedo sin antes crear un modelo, solo crear un view, dependindo del tipo de clase que herede, puedo mostrarlo, 
+tengo que crear un url, en urls, importar desde la carpeta del proyecto. y luego  en url quedaría algo así :
+
+from django.contrib import admin
+from django.urls import path
+from applications.probes. views import IndexView
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('home/', IndexView.as_view()),
+]
+
+
+Este es el urls de proyecto, pero puedo crear un urls.py en mi app y trabajar cn estas y luego conectarlas cn la url principal.
+----------------------------------------------------------------------------------------------------------------------------------------
+
+Vamos a crear una carpeta Templates a nivel proyecto, es decir en la misma altura de la carpeta de nuestro proyecto, para desde esta reutilizar
+codigo hacia los templates de nuestras apps. Vamos mis amoreee dalee. Pero alfinaaal haremos el diseño. 
+Para que lo anterior funcione, debemos en nuestro archivo de configuracion base.py, agregar nuestra direccion a DIRS de TEMPLATES
+de dicho archivo, esto para que reconozca los templates de nuestras nuevas carpetas, siguiendo el orden que queremos.
+Quizás sea necesario editar la dirección raiz BASE_DIR, se configura en el mismo archivo, más arriba
+----------------------------------------------------------------------------------------------------------------------
+
+Para mantener el orden según lo anterior, crearemos un urls.py , para cada aplicacion, y así no llenar de urls el urls.py 
+del proyceto si no que solo llamar a todo lo qe contengan también los urls.py por cada app. para los urls.py de applicaciones
+copiaremos el sgte codigo, from urls of projecto , editaremos los path segun necesitemos en cada app  : 
+
+from django.urls import path
+from applications.probes. views import IndexView
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('home/', IndexView.as_view()),
+]
+
+--------------------------------------------------------------------------------------------------------------------
+Django ofrece unn set variado de subclases de view, para realizar funcionalidades tipicas, como enlistar, login,
+register, etc. cada una la podemos modificar en su uso, y agregarle cosas nuevas, con esto se ahorra muchisimo tiempo
+en el desarrollo. 
+---------------------------------------------------------------------------------------------------------------------
+Cuando hablamos de BASES DE DATOS, hablamos de consultas: - procedimientos almacenados , - scripts , - disparadores/triggers
+registros, copias de seguridad. Todo lo anterior, sin importar el motor de base de datos son SQL . 
+
+Creada una clase en models, que herede de models, en admin.py , coniguramos que queremos interactuar con la base de datos. 
+ejemplo:
+--------------------------------
+from django.contrib import admin
+from .models import Prueba
+
+# Register your models here.
+
+admin.register(Prueba)
+
+--------------------------------
+
+Ánimo, ahora sabes librería estandar de python, sabes de qué se trata la POO. 
+Antes no sabías python, no sabías POO. Ahora sabes ! . Antes no sabías que para hacer un proyecto necesitabas
+el archivo __init__.py , no sabías nada de tkinter , sklearn ni nada, tampoco sabías qué es una api.
+No sabías el modelo MVT , no sabías nada de Django, ahora sabes almenos inicializar un proyecto, y ordenar las carpeetas
+configurar un poco el framework. Ahora tienes github!.  
+
+--------------------------------------------------------------------
+
+Para recorrer el choices, no era necesario realizar dos for anidados:
+
+class Empleado(models.Model):
+    job_choices=(('0','Contador'),
+                 ('1','Administrador'),
+                 ('2','Economista'),
+                 ('3','Developer'))
+    ''' Modelo para tabla de empleado'''
+    first_name = models.CharField('Nombres', max_length=60)
+    last_name = models.CharField('Apellidos', max_length=60)
+    job=models.CharField('Trabajo',max_length=1,choices=job_choices)
+    departamento = models.ForeignKey(Departamento, on_delete=models.CASCADE)
+    
+    def __str__(self):
+#      for cargos in self.job_choices:  
+ #      for n,cargo in cargos:
+        for n,cargo in self.job_choices:  # Como se define self.job_choices , quiere decir que ya agarro una pareja ('n','cargo') la asignada. 
+            if n==self.job:               # Por esto no es necesario recorrer job_choices, con dos for
+             return f'{self.id}- {self.first_name} - {cargo}'
+#      return f'{self.id}- {self.first_name} - cargo desconocido'    
+  
+-----------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
