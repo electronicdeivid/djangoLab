@@ -8,7 +8,7 @@ class IndexView(TemplateView):
 
 class PruebaListView(ListView):
     template_name='lista.html'
-    queryset=['Python','Django','Flask','JavaScript','React','Angular', 'AWS Cloud Practitioner','Git','Un tipazo']
+    queryset=['Python','Django','AWS',]
     context_object_name='lista_prueba'
 
 class ModeloPruebaListView(ListView):

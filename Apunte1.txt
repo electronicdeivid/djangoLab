@@ -137,13 +137,6 @@ from .models import Prueba
 
 admin.register(Prueba)
 
---------------------------------
-
-Ánimo, ahora sabes librería estandar de python, sabes de qué se trata la POO. 
-Antes no sabías python, no sabías POO. Ahora sabes ! . Antes no sabías que para hacer un proyecto necesitabas
-el archivo __init__.py , no sabías nada de tkinter , sklearn ni nada, tampoco sabías qué es una api.
-No sabías el modelo MVT , no sabías nada de Django, ahora sabes almenos inicializar un proyecto, y ordenar las carpeetas
-configurar un poco el framework. Ahora tienes github!.  
 
 --------------------------------------------------------------------
 
