@@ -194,7 +194,91 @@ del producto, poniendo énfasis en la lógica del negocio .
 contenido en la carpeta probes. Para esto se modifican los archuvos urls, view, la configuracion en local, los admin.py Y luego de 
 haber modificado todo con los nuevos nombres, se eliminan todos los archivos.py dentro de las carpetas migrations de cada app. 
 Sre ejecutan los comandos makemigrations y migrate satisfactoriamente, podemos seguir con el proyecto en inglés, que es la buena
-práctica de desarrollo. (!!!)
+práctica de desarrollo. (!!!) el comit se realizó con el comentario "change from spanish to english, and new migrations"
+
+Para mejorar el manejo de nuestros modelos dentro del administrador de django, podemos agregar una clase Meta a un modelo.
+
+----GEMINI: 
+
+Los metadatos en el contexto de una clase Meta para un modelo en Django:
+
+En Django, una clase Meta dentro de un modelo define información adicional sobre el comportamiento del modelo en la aplicación. 
+Esta información se conoce como metadatos. Los metadatos no son parte del modelo en sí, sino que proporcionan información adicional 
+que Django utiliza para gestionar el modelo.
+
+Algunos ejemplos de metadatos que puedes definir en una clase Meta incluyen:
+
+verbose_name: El nombre que se mostrará en la interfaz de administración de Django para el modelo.
+verbose_name_plural: El nombre plural que se mostrará en la interfaz de administración de Django para el modelo.
+ordering: Una lista de campos por los que se ordenarán los objetos del modelo por defecto.
+db_table: El nombre de la tabla en la base de datos que se utilizará para almacenar los datos del modelo.
+unique_together: Una lista de tuplas de campos que deben ser únicos juntos.
+permissions: Una lista de permisos que se pueden usar para controlar el acceso al modelo.
+
+Aquí hay un ejemplo de una clase Meta con algunos metadatos:
+
+Python
+class MyModel(models.Model):
+    name = models.CharField(max_length=255)
+
+    class Meta:
+        verbose_name = "Mi modelo"
+        verbose_name_plural = "Mis modelos"
+        ordering = ("-name",)
+        db_table = "my_models"
+        unique_together = (("name", "age"),)
+        permissions = (
+            ("can_view_my_model", "Puede ver mi modelo"),
+            ("can_edit_my_model", "Puede editar mi modelo"),
+        )
+
+---DJANGO DOCUMENTACION:
+Los metadatos del modelo son “cualquier cosa que no sea un campo”, como opciones de orden ( ordering), 
+nombre de tabla de base de datos ( db_table) o nombres singulares y plurales legibles por humanos ( verbose_namey verbose_name_plural).
+No se requiere ninguno y agregarlo a un modelo es completamente opcional.class Meta
+
+Meta Puede encontrar una lista completa de todas las opciones posibles en EL SGTE LINK:
+https://docs.djangoproject.com/en/4.2/ref/models/options/
+
+ejemplo en mi codigo :
+
+class Departament (models.Model):
+  name=models.CharField('Departament Name',max_length=30)
+  shor_name=models.CharField('Short Name' , max_length=20,blank=True,null=True,unique=True)
+  anulate=models.BooleanField('Anulated', default=False)
+
+  def __str__(self):
+    return f'{self.shor_name} - {self.name}'
+  
+  class Meta:
+    verbose_name='Departamento'           # si quiero escribo esto, le cambio el nombre a como se presenta en django
+    verbose_name_plural='Departamentos'  
+    ordering=('name',)                #ordena las filas de la columna del campo por name alfabetico. inverso -name
+    unique_together=('name', 'shor_name')  # Solo se puede registrar una combinacion de nombre y shortmname.
+    # es decir la combinacion de ambos campos no se puede reptir. 
+
+
+Otro caso en probes.py: 
+    
+class Prueba(models.Model):
+  #Shields of my model
+  mes=models.CharField('Mes',max_length=30)
+  meta = models.CharField('Meta/s',max_length=50)
+  
+  class Meta:
+    unique_together=('mes',)      
+    #Functions of my model
+  def __str__(self):
+    return f'{self.mes}: {self.meta}' 
+
+# no me deja ingresar dos veces el mismo mes.    
+--------------------------------------------------------------------------------------------------
+
+ESTAMOS INTENTANDO REALIZAR LA RELACION MUCHOS ES A MUCHOS P ARA DARLE DISTINTAS TAREAS A CASA META DEL MES. 
+
+
+
+
 
 
 
