@@ -272,10 +272,16 @@ class Prueba(models.Model):
     return f'{self.mes}: {self.meta}' 
 
 # no me deja ingresar dos veces el mismo mes.    
---------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------
 
 ESTAMOS INTENTANDO REALIZAR LA RELACION MUCHOS ES A MUCHOS P ARA DARLE DISTINTAS TAREAS A CASA META DEL MES. 
+Se puede, sin embargo al crear una clase cn solo campo model.charfield,  y luego asociarla a la clase de mes,o meta
+se puede asociar solo una tarea, a varios meses, utilizando el ForeignKey. Otro caso sería utilizar manytomany fields
+pero al relacionar la lista de tareas a cualquier mes, se relacionan todas las tareas existentes. 
 
+El mismo problema ocurre para asignarle distintas skills a un empleado, o le asigno todas las skills con manytomany, o le asigno solo una de 
+las disponibleas con ForeignKey. Se debe resolver una forma de que de las distintas skills credas, de la clase Skill, se puedan
+asociar a un empleado, solo las que uno determine en el administrador, y no todas o no solo una sola. 
 
 
 

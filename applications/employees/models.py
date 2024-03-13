@@ -2,6 +2,19 @@ from django.db import models
 from applications.departament.models import Departament
 # Create your models here.
 
+
+
+class Skill(models.Model):
+  skill=models.CharField('Skill',max_length=30)
+
+  class Meta:
+    verbose_name='skill'
+    verbose_name_plural='skills'
+
+  def __str__(self):
+    return self.skill 
+
+
 class Employee(models.Model):
   job_choices=(('0','Counter'),
                  ('1','Administrator'),
@@ -11,6 +24,7 @@ class Employee(models.Model):
   last_name = models.CharField('Lastnames', max_length=60)
   job=models.CharField('Job',max_length=1,choices=job_choices)
   departament = models.ForeignKey(Departament, on_delete=models.CASCADE)
+  skill=models.ForeignKey(Skill, on_delete=models.CASCADE,null=True)
 
   class Meta:
     verbose_name='Empleo'
@@ -23,6 +37,4 @@ class Employee(models.Model):
       if n==self.job:
         return f'{self.last_name}- {self.first_name} - {role}'
 
-class Skills(models.Model):
-  hability=models.CharField('Sassdsill',max_length=30)
-#  skill=models.ManyToManyField('Employee',)
+ 
