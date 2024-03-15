@@ -1,4 +1,10 @@
- djangoLab
+
+![image](https://github.com/electronicdeivid/djangoLab/assets/162055932/200c5096-db52-47f3-9d61-a61435d1b23c)
+
+--------------------------
+------DjangoLab------------
+---------------------------
+
 
 Documentación de mi experimentación en el django framework. Es tener un respaldo personal, y registro de progreso, más que otra cosa.
 La carpeta de proyecto es la carpeta empleado. Las apps de django se alojan en la carpeta applications.
