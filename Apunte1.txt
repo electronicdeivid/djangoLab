@@ -273,15 +273,180 @@ class Prueba(models.Model):
 
 # no me deja ingresar dos veces el mismo mes.    
 -------------------------------------------------------------------------------------------------------------------
+Conclusión 12/03/2024
 
 ESTAMOS INTENTANDO REALIZAR LA RELACION MUCHOS ES A MUCHOS P ARA DARLE DISTINTAS TAREAS A CASA META DEL MES. 
 Se puede, sin embargo al crear una clase cn solo campo model.charfield,  y luego asociarla a la clase de mes,o meta
 se puede asociar solo una tarea, a varios meses, utilizando el ForeignKey. Otro caso sería utilizar manytomany fields
 pero al relacionar la lista de tareas a cualquier mes, se relacionan todas las tareas existentes. 
 
-El mismo problema ocurre para asignarle distintas skills a un empleado, o le asigno todas las skills con manytomany, o le asigno solo una de 
-las disponibleas con ForeignKey. Se debe resolver una forma de que de las distintas skills credas, de la clase Skill, se puedan
+El mismo problema ocurre para asignarle distintas skills a un empleado, o le asigno todas las skills con manytomany, o le asigno solo 
+una de las disponibleas con ForeignKey. Se debe resolver una forma de que de las distintas skills credas, de la clase Skill, se puedan
 asociar a un empleado, solo las que uno determine en el administrador, y no todas o no solo una sola. 
+
+-----------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------
+
+
+
+AVANZANDO 14/04/2024
+
+A continuación avanzaremos con lo que presenta el curso. el punto anterior pendiente de poder seleccionar skills
+y asignar más de una a un trabajador, está pendiente. 
+
+A continuación se editará la vista del administrador para la sección de empleados, actualmente luce así :
+
+
+EMPLEO
+	Carrasco- Nathalie - Developer
+	Guerra- Cesar Patricio - Administrator
+	Higueras Reglâ- David Jean - Developer
+	Montecinos- Andrea - Administrator
+
+  Sin entregar más información sobre cada empleado que el cargo, queremos que muestre la información de cadda empleado en una tabla.
+y no solo una lista punteada.
+
+DOCUMENTACION :
+
+El sitio de administración de Django ¶
+Una de las partes más poderosas de Django es la interfaz de administración automática. Lee metadatos de
+sus modelos para proporcionar una interfaz rápida centrada en el modelo donde los usuarios confiables pueden
+administrar el contenido de su sitio. El uso recomendado por el administrador se limita a la herramienta de gestión
+interna de una organización. No está diseñado para construir toda la interfaz.
+
+El administrador tiene muchos ganchos para la personalización, pero tenga cuidado al intentar utilizar esos ganchos exclusivamente. 
+Si necesita proporcionar una interfaz más centrada en procesos que abstraiga los detalles de implementación de las tablas
+y campos de la base de datos, entonces probablemente sea el momento de escribir sus propias vistas.
+
+En este documento analizamos cómo activar, usar y personalizar la interfaz de administración de Django.
+
+
+---ModelAdmin objects----
+
+La ModelAdminclase es la representación de un modelo en la interfaz de administración. 
+Por lo general, estos se almacenan en un archivo nombrado admin.pyen su aplicación.
+Echemos un vistazo a un ejemplo de ModelAdmin:
+
+___________________________________
+from django.contrib import admin   # viene por defecto en admin.py de la appcreada
+from myapp.models import Author    # Importamos un modelo desde los modelos de nuestra app , models.py , en este caso Author
+
+class AuthorAdmin(admin.ModelAdmin):
+    pass
+
+admin.site.register(Author, AuthorAdmin)  # Para poder visualizar nuestro modelo en admin ,debemos registrarlo cn esta linea   
+___________________________________
+¿ Necesitas ModelAdminalgún objeto?
+
+En el ejemplo anterior, la ModelAdminclase no define ningún valor personalizado (todavía). Como resultado, 
+se proporcionará la interfaz de administración predeterminada. Si está satisfecho con la interfaz de administración predeterminada,
+ no necesita definir ningún ModelAdminobjeto; puede registrar la clase de modelo sin proporcionar una ModelAdmindescripción.
+  El ejemplo anterior podría simplificarse a:
+_______________________________
+from django.contrib import admin
+from myapp.models import Author
+
+admin.site.register(Author)
+________________________________
+
+ModelAdmin options¶
+Es ModelAdminmuy flexible. Tiene varias opciones para personalizar la interfaz. 
+Todas las opciones están definidas en la ModelAdmin subclase:
+
+---
+from django.contrib import admin
+
+
+class AuthorAdmin(admin.ModelAdmin):
+    date_hierarchy = "pub_date
+---
+ModelAdmin.fields¶
+Utilice la fieldsopción para realizar cambios simples en el diseño de los formularios en las páginas «agregar» y «cambiar», 
+como mostrar solo un subconjunto de campos disponibles, modificar su orden o agruparlos en filas. Por ejemplo, podría definir una
+ versión más simple del formulario de administración para el django.contrib.flatpages.models.FlatPagemodelo de la siguiente manera:
+
+class FlatPageAdmin(admin.ModelAdmin):
+    fields = ["url", "title", "content"]
+
+
+En el siguiente link ,están todos los atributos que se pueden editar para la subclase ModelAdmin
+https://docs.djangoproject.com/es/4.2/ref/contrib/admin/
+En ella se ven varios atributos , para personalizar nuestos paneles de administrador.
+Las posibilidades son muchas, los atributos tienen de todo. 
+Un atributo muy útil es list_filter 
+También contiene un monton de métodos, revisar más tarde. 
+
+También está la clases: InlineModelAdmin, adminsite , con muchos objetos:
+
+AdminSite.login_template¶
+Ruta a una plantilla personalizada que será utilizada por la vista de inicio de sesión del sitio de administración.
+
+FIN DOCUMENTACION
+
+
+El problema de poder distinguir entre las skills disponibles para todos y las disponibles de ese grupo 
+para cada empleado, se solucionó con un filter_horizontal , con este escogo cuales de la lista de ksills
+posee mi empleado. además puedo agregar skills a filter general del panel y filtrar trabajadores
+segun las skills que posean. !!
+
+FUNCION ESPECIAL : 
+
+Puedo agregar una columna, con un campo que no esté definido en models, pero debo enseguida
+definir su contenido mediante una función, con esto puedo hacer mucho, cálculos quizás, sacar conclusiones
+a raíz de otros campos del modelo, por ejemplo con la fecha de nacimiento, calcular la edad. 
+
+
+ejemplo :
+
+class EmpleadoAdmin(admin.ModelAdmin): 
+  list_display('first_name','job','full_name',)
+   
+   def full_name(self,obj):
+   print(obj.first_name)
+   return obj.first_name + ' ' + obj.last_name
+
+   -----------------------------------------------------------------------
+
+Otra cosa que se puede hacer en el admin de django, es personalizar el frontend del mismo. 
+Se puede utilizar apps de terceros, con distintos fines, que crearon en la ocmunidad de Django. 
+Por ejemplo, un editor, que agrege una ventana un campo para editar texto, se puede haceer qe puedas cargar imagenes, 
+y otras cosas, el estilo del mismo administrador. Uno weno es DJango CKEditor
+Hay algunas apps de terceros que sirven al admin, otras no. 
+
+fin por 15/03 , Para el 16/03 comenzar a trabajar con las vistas genéricas de Django. 
+
+----------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

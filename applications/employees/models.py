@@ -2,10 +2,8 @@ from django.db import models
 from applications.departament.models import Departament
 # Create your models here.
 
-
-
 class Skill(models.Model):
-  skill=models.CharField('Skill',max_length=30)
+  skill=models.CharField('Skills',max_length=30)
 
   class Meta:
     verbose_name='skill'
@@ -13,7 +11,6 @@ class Skill(models.Model):
 
   def __str__(self):
     return self.skill 
-
 
 class Employee(models.Model):
   job_choices=(('0','Counter'),
@@ -24,7 +21,8 @@ class Employee(models.Model):
   last_name = models.CharField('Lastnames', max_length=60)
   job=models.CharField('Job',max_length=1,choices=job_choices)
   departament = models.ForeignKey(Departament, on_delete=models.CASCADE)
-  skill=models.ForeignKey(Skill, on_delete=models.CASCADE,null=True)
+  skill=models.ManyToManyField(Skill)
+  SearchableFields=['first_name','last_name','job']
 
   class Meta:
     verbose_name='Empleo'
