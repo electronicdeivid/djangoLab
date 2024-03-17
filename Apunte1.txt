@@ -416,6 +416,103 @@ Hay algunas apps de terceros que sirven al admin, otras no.
 fin por 15/03 , Para el 16/03 comenzar a trabajar con las vistas genéricas de Django. 
 
 ----------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------
+16 MARZO -----------------------------------------------------
+
+Sección 8: Vistas basadas en Clases de Django. 
+
+DOCUMENTACION :Vistas de escritura ¶
+
+Una función de vista, o vista para abreviar, es una función de Python que recibe una solicitud web y devuelve una respuesta web. 
+Esta respuesta puede ser el contenido HTML de una página web, una redirección, un error 404, un documento XML o una imagen. . . o
+cualquier cosa, de verdad. La vista en sí contiene cualquier lógica arbitraria necesaria para devolver esa respuesta. 
+Este código puede vivir en cualquier lugar que desee, siempre que esté en su ruta de Python. 
+No hay ningún otro requisito, no hay «magia», por así decirlo. Con el fin de colocar el código en algún lugar ,
+la convención es colocar las vistas en un archivo llamado views.py, ubicado en el directorio de su proyecto o aplicación.
+
+
+Una vista sencilla¶
+
+Aquí hay una vista que devuelve la fecha y hora actuales, como un documento HTML:
+
+from django.http import HttpResponse
+import datetime
+
+
+def current_datetime(request):
+    now = datetime.datetime.now()
+    html = "<html><body>It is now %s.</body></html>" % now
+    return HttpResponse(html)
+
+Repasemos este código una línea a la vez:
+
+Primero, importamos la clase HttpResponsedel django.httpmódulo, junto con la biblioteca de Python datetime.
+
+A continuación, definimos una función llamada current_datetime. 
+Esta es la función de vista. Cada función de vista toma un HttpRequest
+ objeto como primer parámetro, que normalmente se denomina request.
+
+Tenga en cuenta que el nombre de la función de vista no importa
+; No es necesario que tenga un nombre determinado para que Django lo reconozca. 
+Lo llamamos current_datetimeaquí porque ese nombre indica claramente lo que hace.
+
+La vista devuelve un HttpResponseobjeto que contiene la respuesta generada. Cada función de vista es r
+esponsable de devolver un HttpResponseobjeto. (Hay excepciones, pero las abordaremos más adelante).
+
+Entonces, en resumen, esta función de vista devuelve una página HTML que incluye la fecha y hora actuales.
+Para mostrar esta vista en una URL particular, necesitarás crear una URLconf ; consulte el despachador de URL
+para obtener instrucciones.
+-------------------------------
+AHORA la clase 37 desafía a obtener lo siguiente, mediante templates html:
+
+# 1.- Listar todos los empleados
+# 2.- Listar todos los empleados que pertenecen a un área de la empresa
+# 3.- Listar empleados por trabajo
+# 4.- Listar los empleados por palabra clave
+# 5.- Listar habilidades de un empleado
+
+1-Listar todos los empleados: 
+
+Mediante ListView 
+
+en VISTA :  
+class EmployeeListView(ListView):
+    model= Employee
+    template_name='employee.html'
+    context_object_name='employee'
+
+en TEMPLATE: 
+<h1>Our Employees</h1> 
+
+{%for empleado in employee%}
+<li>{{empleado.first_name}} {{empleado.last_name}} </li>
+{% endfor %}
+
+2.- Listar empleados por trabajo:
+
+<h2>Cargos Empleados</h2>
+{%for empleado in employee%}
+<li>{{empleado.departament}} </li>
+{% endfor %}
+
+mi intento :
+
+<h2>Cargos Empleados</h2>
+{%for empleado in employee%}
+ {% if empleado.departament == 'Software Quality' %}
+    <h3>QA - Software Quality</h3>
+    <li>{{empleado.first_name}}</li>
+    {% endif %}   
+{% endfor %}
+</body>
+
+<h2>Cargos Empleados</h2>
+{%for empleado in employee%}
+  {%if empleado.departament == 'Human Resources'%}
+      <p>{{empleado.departament}}</p>
+   {%endif%}
+{% endfor %}
+
 
 
 
