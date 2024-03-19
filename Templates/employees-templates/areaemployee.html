@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Empleados por areas</title>
+</head>
+<body>
+<h1>Departaments</h1>    
+
+<h3>Software Production</h3>
+{%for empleado in employee%}
+   {%if empleado.departament.name == "Software Production"%}
+      <li>{{empleado.first_name}} {{empleado.last_name}}</li>
+   {%endif%}
+   {% endfor %}
+
+<h3>HHRR</h3>
+{%for empleado in employee%}
+   {%if empleado.departament.name == "Human Resources"%}
+      <li>{{empleado.first_name}} {{empleado.last_name}}</li>
+   {%endif%}
+   {% endfor %}
+
+<h3>Managment</h3>
+{%for empleado in employee%}
+   {%if empleado.departament.name == "Administration Departament"%}
+      <li>{{empleado.first_name}} {{empleado.last_name}}</li>
+   {%endif%}
+   {% endfor %}
+
+<h3>Software Quality</h3>
+{%for empleado in employee%}
+   {%if empleado.departament.name == "Software Quality"%}
+      <li>{{empleado.first_name}} {{empleado.last_name}}</li>
+   {%endif%}
+{% endfor %}
+
+</body>
+</html>

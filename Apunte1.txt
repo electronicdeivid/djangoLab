@@ -513,6 +513,140 @@ mi intento :
    {%endif%}
 {% endfor %}
 
+------------
+17 MARZO / clase 38
+
+Por alguna razón la forma de enlistar los empleados según sus departamentos, planteada en los ciclos for anteriores
+no retornaron en pantalla ningún contenido. En la Clase 38, el curso plantea una solución mediante Filtros en Listview.
+Que veremos y analizaremos ,para poder implementar. 
+
+Aún pendiente de mostrar en los templates:
+# 2.- Listar todos los empleados que pertenecen a un área de la empresa
+# 3.- Listar empleados por trabajo
+# 4.- Listar los empleados por palabra clave
+# 5.- Listar habilidades de un empleado
+
+
+estos fueron mis ultimos intentos , se mostró
+
+<h2>Cargos Empleados</h2>
+{%for empleado in employee%}
+   <p>{{empleado.departament}}</p>
+   {%if empleado.departament == "Software Production"%}
+      <h3>Empleados del departamento de Software Production<h3>
+      <li>{{empleado.first_name}}</li>
+   {%endif%}
+{% endfor %}
+
+sin embargo en el if, si pongo empleado.first_name == "Fulanito" 
+y que al cumplirse, imrpima empleado.departament , ahí sí funciona. 
+Algún error debe haber, quizá no sea string "empleado-departament", pero no tiene sentido
+tmpoco tiene sentido que sea un tema de rutas, porque se puede llamar empleado.departament en un ciclo for
+fuera de tenerlo como condicion en el if, además revisé bien la sintaxis, del cargo, llibre de espacios
+o caracteres distintos a su valor string. Pero bueno en fin. 
+
+--------------------------------------------------------------------------------------------------------------
+MARZO 18  . CLASE 38 
+
+MOMENTOOOOOOOOOOOOOOO, ENCONTRE COMO ENLISTAR EN UNA SOLA VISTA, TODAS LA ÁREAS, hacía falta llamar a empleado.departament.name
+ya que empleado  estaba relacionado con departamento, pero departamento a la vez es otra tabla con sus campos, y ahí llamar el campo name.
+
+<h3>Software Quality</h3>
+{%for empleado in employee%}
+   {%if empleado.departament.name == "Software Quality"%}
+      <li>{{empleado.first_name}} {{empleado.last_name}}</li>
+   {%endif%}
+{% endfor %}
+
+-----------------------------------------------------------------------------
+Resuelto lo de arriba solo quedan 3 puntos de desafío : 
+
+# 3.- Listar empleados por trabajo
+# 4.- Listar los empleados por palabra clave
+# 5.- Listar habilidades de un empleado
+
+Listar empleados por trabajo, el primer intento fue recuperar el trabajo del empleado en el template mediante :
+{{empleado.job}} , sin embargo, job es un campo que depende de otro campo, job_choices la cual es una tupla, enumerada: 
+
+
+class Employee(models.Model):
+    job_choices=(('0','Counter'),
+                 ('1','Administrator'),
+                 ('2','Economist'),
+                 ('3','Developer'))
+    first_name = models.CharField('Names', max_length=60)
+    last_name = models.CharField('Lastnames', max_length=60)
+    job=models.CharField('Job',max_length=1,choices=job_choices)
+    departament = models.ForeignKey(Departament, on_delete=models.CASCADE)
+    skill=models.ManyToManyField(Skill)
+    SearchableFields=['first_name','last_name','job']
+
+
+Por lo anterior {{empleado.job}} en template me entrega el índice del empleo de la lista job_choices, para obtener el valor
+legible, debo utilar el metodo get de la siguiente manera : {{empleado.get_job_display}} esto me entrega el cargo del empleado
+en el template y no solo su índice. (Gemini me dijo el metodo get_job_display)
+
+La lógica para enlistar empleados mediante su cargo, sería la misma que para enlistar, segun departamento, solo que debería hacer
+dentro de un ciclo for , un condicional if {{empleado.get_job_display}} == 'Developer' : {{empleado.name}}.
+
+Otro caso similar en la consulta de stackoverflow, indican como resolver en views y en templates:
+https://stackoverflow.com/questions/4320679/django-display-choice-value
+
+--------------------------------------------------------------------------------------------------------
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+
+Resuelto el punto 3 del desafío ahora solo falta mostrar en template:
+
+# 4.- Listar los empleados por palabra clave
+# 5.- Listar habilidades de un empleado
+
+El punto 4, es más o menos ambiguo, no se vé necesario. El punto 5 se intentará resolver mañana, ignorando el párrafo que viene 
+acontinuación y la clase 28. Ya que el desafío será acceder a un campo de nuestra tabla
+principal de empleados, que mantiene la relación manytomany con la tabla skill.
+
+CONTINUAR 19 DE MARZO 
+
+CONTINUAR 19 DE MARZO 
+
+CONTINUAR 19 DE MARZO 
+
+CONTINUAR 19 DE MARZO 
+
+CONTINUAR 19 DE MARZO 
+
+CONTINUAR 19 DE MARZO 
+
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1111111
+--------------------------------------------------------------------
+Ahora veremos la solución mediante filtros. clase 38
+
+Utilizando filter podemos mostrar los empleados de un determinado Departamento mediante filter. 
+Ya que uno de los campos de la tabla employee, es una llave foranea , ForeignKey,  a la tabla o modelo Departament,
+es decir tiene la relación uno es a muchos. Un departamento se puede relacionar a muchos empleados. 
+Sin embargo mediante filter, solo se puede configurar enlistar los empleados de un departamento, para una vista , y se debe configurar
+desde el backend, es decir, podemos ver en un template, la lista de los trabajadores filtrados, según un solo departamento. 
+
+Este método no es práctico, uno espera, que el mediante la parte visual , el usuario pueda interactuar con la db.
+y poder filtrar los distintos campos de la tabla de empleados u otras tablas en infinitos contextos. A cotninuación documentaré
+el método de filtrado por vsita, desde el backend. utilizando el atributo queryset de ListView:
+
+
+class EmployeeAreaListView(ListView):
+    context_object_name='areaemployee'
+    template_name='areaemployee.html'
+   # queryset=Employee.objetcs.filter(departament__name='')
+-------------------------------------------------------------------------------------
+
+
+
+
+
+
 
 
 

@@ -7,16 +7,9 @@
 </head>
 <body>
 <h1>Our Employees</h1>
-<h2>Nombres Empleados</h2>
+<h2>Employees Names</h2>
 {%for empleado in employee%}
-<li>{{empleado.first_name}} {{empleado.last_name}} </li>
-{% endfor %}
-
-<h2>Cargos Empleados</h2>
-{%for empleado in employee%}
-
-      <p>{{objet_list}}</p>
-
+<li>{{empleado.first_name}} - {{empleado.get_job_display}}</li>
 {% endfor %}
 
 </body>

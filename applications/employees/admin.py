@@ -12,7 +12,7 @@ class EmployeeAdmin(admin.ModelAdmin):
     actions_selection_counter = True
     list_display = ['first_name','last_name','job','departament']
     search_fields=Employee.SearchableFields
-    list_filter=('job','skill',)
+    list_filter=('job','skill','departament')
     filter_horizontal=('skill',)
     fieldsets = [
         (
