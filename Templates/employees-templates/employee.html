@@ -6,10 +6,14 @@
     <title>Employee Class</title>
 </head>
 <body>
-<h1>Our Employees</h1>
-<h2>Employees Names</h2>
+<h2>Our Employees</h2>
+
 {%for empleado in employee%}
-<li>{{empleado.first_name}} - {{empleado.get_job_display}}</li>
+<h4>{{empleado.first_name}} - {{empleado.get_job_display}} : </h4>
+
+{%for skill in empleado.skill.all%}
+<li>{{skill.skill}}</li>
+{% endfor %}
 {% endfor %}
 
 </body>

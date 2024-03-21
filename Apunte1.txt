@@ -607,23 +607,79 @@ El punto 4, es más o menos ambiguo, no se vé necesario. El punto 5 se intentar
 acontinuación y la clase 28. Ya que el desafío será acceder a un campo de nuestra tabla
 principal de empleados, que mantiene la relación manytomany con la tabla skill.
 
-CONTINUAR 19 DE MARZO 
+----
+------------------
+--------------------------------------------------------------------------------------
 
-CONTINUAR 19 DE MARZO 
+- ---------------------MARZO 20-------------------------------
 
-CONTINUAR 19 DE MARZO 
+# 5.- Listar habilidades de un empleado
 
-CONTINUAR 19 DE MARZO 
+El listar las habilidades de un empleado, no figuró mayor dificultad, no fue necesario un metodo, ESPECIAL
+COMO  {{empleado.get_job_display}}  fue el caso de acceder al valor de la tupla de el campo job. 
+En este caso simplemente se accedió primeramente a todas las skilss, pertenecientes a un empleadoy luego se iteraron
 
-CONTINUAR 19 DE MARZO 
+EL modelo-vista- template se presenta a continuacion:
 
-CONTINUAR 19 DE MARZO 
+------MODELO---------
+
+class Skill(models.Model):
+    skill=models.CharField('Skills',max_length=30)
+
+    class Meta:
+        verbose_name='skill'
+        verbose_name_plural='skills'
+
+    def __str__(self):
+        return self.skill 
+
+class Employee(models.Model):
+    job_choices=(('0','Counter'),
+                 ('1','Administrator'),
+                 ('2','Economist'),
+                 ('3','Developer'))
+    first_name = models.CharField('Names', max_length=60)
+    last_name = models.CharField('Lastnames', max_length=60)
+    job=models.CharField('Job',max_length=1,choices=job_choices)
+    departament = models.ForeignKey(Departament, on_delete=models.CASCADE)
+    skill=models.ManyToManyField(Skill)
+    SearchableFields=['first_name','last_name','job']
+
+    class Meta:
+        verbose_name='Empleo'
+        verbose_name_plural='Empleos' 
+        ordering=('last_name',) 
+        unique_together=('first_name','last_name',)
+
+    def __str__(self):
+        for n,role in self.job_choices:
+            if n==self.job:
+                return f'{self.first_name} {self.last_name} - {role}'
+
+------VISTA----------
+class EmployeeListView(ListView):
+    model= Employee
+    context_object_name='employee'
+    template_name='employee.html'
+
+---TEMPLATE----------
+
+{%for empleado in employee%}
+<h4>{{empleado.first_name}} - {{empleado.get_job_display}} : </h4>
+
+{%for skill in empleado.skill.all%}
+<li>{{skill.skill}}</li>
+{% endfor %}
+{% endfor %}
+
+CON ESTE PUNTO TENEMOS YA RESUELTOS LOS 5 PUNTOS DE DESAFIO QUE PRESENTO EL CURSO EN LA CLASE 37.
+SE LOGRARON RESOLVER !!! SIN VER LA SOLUCIONES DEL PROFESOR :DDDD <3 PROCEDO AHORA A VER LA CLASE 38 Y TOMAR APUNTES DE 
+LO NUEVO QUE SE PRESENTE. SI PLANTEA HACER ALGO , SE INTENTA ANTES DE VERLO. 
 
 
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1111111
---------------------------------------------------------------------
-Ahora veremos la solución mediante filtros. clase 38
+
+Ahora veremos la solución mediante filtros. CLASS 38
 
 Utilizando filter podemos mostrar los empleados de un determinado Departamento mediante filter. 
 Ya que uno de los campos de la tabla employee, es una llave foranea , ForeignKey,  a la tabla o modelo Departament,
@@ -635,14 +691,107 @@ Este método no es práctico, uno espera, que el mediante la parte visual , el u
 y poder filtrar los distintos campos de la tabla de empleados u otras tablas en infinitos contextos. A cotninuación documentaré
 el método de filtrado por vsita, desde el backend. utilizando el atributo queryset de ListView:
 
+MODELO
+La clase empleado que se ha utilizado desde el principio
+
+ VISTA 
 
 class EmployeeAreaListView(ListView):
     context_object_name='areaemployee'
     template_name='areaemployee.html'
-   # queryset=Employee.objetcs.filter(departament__name='')
--------------------------------------------------------------------------------------
+    queryset=Employee.objetcs.filter(departament__name='Software Production')
+
+TEMPLATE
+
+<h1>Lista de empleados por departamento</h1>
+<ul>
+{%for e in object_list%}
+<li>{{e}}</li>
+</ul>
+
+------------------------------------------------------------------- 
+
+note : CRUD -> CREATE - READ- UPDATE- DELETE
+
+La forma anterior es practicamente la peor forma para realizar filtros. 
+
+Clase 39 'Parámetro por URL y filtro en ListView'
+
+Ahroa para filtras se propone, no usar un parámetro de Listview como el  queryset=Employee.objetcs.filter(departament__name='Software Production')
+Si no un metodo, que se puede sobreescribir :  def get_queryset(self):
 
 
+def get_queryset(self):
+    """
+    Return the list of items for this view.
+    The return value must be an iterable and may be an instance of
+    `QuerySet` in which case `QuerySet` specific behavior will be enabled.
+    """
+    if self.queryset is not None:
+        queryset = self.queryset
+        if isinstance(queryset, QuerySet):
+            queryset = queryset.all()
+    elif self.model is not None:
+        queryset = self.model._default_manager.all()
+    else:
+        raise ImproperlyConfigured(
+            "%(cls)s is missing a QuerySet. Define "
+            "%(cls)s.model, %(cls)s.queryset, or override "
+            "%(cls)s.get_queryset()." % {"cls": self.__class__.__name__}
+        )
+    ordering = self.get_ordering()
+    if ordering:
+        if isinstance(ordering, str):
+            ordering = (ordering,)
+        queryset = queryset.order_by(*ordering)
+    return queryset
+
+esa es la funcion get_queryset(self) : , pero la reescribiremos, pero siempre debe retornar una lista de elementos.
+
+def get_queryset(self):
+    #el codigo qe queremos
+    lista=Employee.objects.filter(
+    departamento__name='Software Production'  
+  )
+    return lista   
+
+entonces quedamos con lo siquienge
+
+MODELO
+
+el modelo de Employees
+
+VISTA
+
+class ListByAreaEmpleado(ListView):
+    #'Lista empleados por Area'
+
+    def get_queryset(self):
+    #el codigo qe queremos
+    lista=Employee.objects.filter(
+    departamento__name='Software Production'  
+  )
+    return lista   
+
+TEMPLATE
+
+<h1>Lista de empleados por departamento</h1>
+<ul>
+{%for e in object_list%}
+<li>{{e}}</li>
+</ul>
+
+Listo, funciona, enlista a los rtabajadores de un area especifica, utilizando un metodo sobreescrito perteneciente
+a la clase que creamos que hereda los metodos y atributos de la clase ListView , ahora, el usuario no tiene acceso
+a nuestras views, para poder cambiar el filtro, por esto debemos cambiar el codigo a una forma en que el filtro
+pueda ser determinado desde el frontend. quedaomoos en la clase39
+ 
+
+ Lo vamos a dejar hasta aqui , para mañana estar despierto en el AWS restart. 
+
+https://ccbv.co.uk/projects/Django/5.0/django.views.generic.list/ListView/
+https://ccbv.co.uk/
+https://docs.djangoproject.com/es/4.2/ref/class-based-views/
 
 
 
